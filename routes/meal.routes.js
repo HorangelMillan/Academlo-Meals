@@ -19,10 +19,16 @@ const { createMealValidators } = require('../middlewares/validators.middleware')
 // init router
 const mealsRouter = express.Router();
 
-mealsRouter.post('/:id', protectSession, isRestaurant, createMealValidators, createMeal);
 mealsRouter.get('/', getAllMeals);
 mealsRouter.get('/:id', isMeal, getMeal);
-mealsRouter.patch('/:id', protectSession, isAdmin, isMeal, updateMeal);
-mealsRouter.delete('/:id', protectSession, isAdmin, isMeal, disableMeal);
+
+mealsRouter.use(protectSession);
+
+mealsRouter.post('/:id', isRestaurant, createMealValidators, createMeal);
+
+mealsRouter.use(':/id', isAdmin)
+    .route('/:id')
+    .patch(isMeal, updateMeal)
+    .delete(isMeal, disableMeal);
 
 module.exports = { mealsRouter };

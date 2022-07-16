@@ -27,9 +27,15 @@ const usersRouter = express.Router();
 // child routes
 usersRouter.post('/signup', createUserValidators, hashPasswordd, createUser);
 usersRouter.post('/login', loginValidators, isEmail, comparePassword, login);
-usersRouter.patch('/:id', updateUserValidators, protectSession, protectUserAcounts, updateUser);
-usersRouter.delete('/:id', protectSession, protectUserAcounts, deleteUser);
-usersRouter.get('/orders', protectSession, isOrders, getUserOrders);
-usersRouter.get('/orders/:id', protectSession, isOrder, getUserOrder);
+
+usersRouter.use(protectSession);
+
+usersRouter.get('/orders', isOrders, getUserOrders)
+usersRouter.get('/orders/:id', isOrder, getUserOrder);
+
+usersRouter.use('/:id', protectUserAcounts)
+    .route('/:id')
+    .patch(updateUserValidators, updateUser)
+    .delete(deleteUser);
 
 module.exports = { usersRouter };

@@ -11,6 +11,8 @@ const isOrder = catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const { user } = req;
 
+    console.log(id)
+
     const order = await Orders.findOne({
         where: {
             id,

@@ -16,9 +16,15 @@ const { isOrders, isOrder } = require('../middlewares/order.middleware');
 // init router
 const ordersRouter = express.Router();
 
-ordersRouter.post('/', protectSession, isMeal, createOrder);
-ordersRouter.get('/me', protectSession, isOrders, getUserOrders);
-ordersRouter.patch('/:id', protectSession, isOrder, completeOrder);
-ordersRouter.delete('/:id', protectSession, isOrder, cancelOrder);
+ordersRouter.use(protectSession);
+
+ordersRouter.post('/', isMeal, createOrder);
+
+ordersRouter.get('/me', isOrders, getUserOrders);
+
+ordersRouter.use('/:id', isOrder)
+    .route('/:id')
+    .patch(completeOrder)
+    .delete(cancelOrder);
 
 module.exports = { ordersRouter };

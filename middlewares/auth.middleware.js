@@ -51,14 +51,13 @@ const comparePassword = catchAsync(async (req, res, next) => {
 
 const protectUserAcounts = catchAsync(async (req, res, next) => {
     const { id } = req.params;
+    const { user } = req;
 
-    const user = await Users.findOne({
-        where: {
-            id
-        }
-    });
+    console.log(`este es el ID: ${id} ---- este es el usuario: ${user.id} y este es el resultado: ${id === user.id}
+    tipo de ID: ${typeof id} tipo de usuario: ${typeof user.id}
+    `);
 
-    if (!user) {
+    if (id != user.id) {
         return next(new appError('This acount does not belong to you', 403 /* Forbiden / denied access */))
     };
 

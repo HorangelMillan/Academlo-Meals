@@ -24,12 +24,23 @@ const { isReview } = require('../middlewares/reviews.middleware');
 // init router
 const restaurantsRouter = express.Router();
 
-restaurantsRouter.post('/', protectSession, createRestaurantValidators, createRestaurant);
 restaurantsRouter.get('/', getAllRestaurants);
 restaurantsRouter.get('/:id', isRestaurant, getRestaurantById);
-restaurantsRouter.patch('/:id', protectSession, isAdmin, updateRestaurant);
-restaurantsRouter.delete('/:id', protectSession, isAdmin, isRestaurant, disableRestaurant);
-restaurantsRouter.post('/reviews/:restaurantId', protectSession, isRestaurant, createRestaurantReview);
-restaurantsRouter.patch('/reviews/:id', protectSession, isReview, updateReview);
-restaurantsRouter.delete('/reviews/:id', protectSession, isReview, deleteReview);
+
+restaurantsRouter.use(protectSession);
+
+restaurantsRouter.post('/', createRestaurantValidators, createRestaurant);
+
+restaurantsRouter.use('/:id', isAdmin)
+    .route('/:id')
+    .patch(updateRestaurant)
+    .delete(isRestaurant, disableRestaurant);
+
+restaurantsRouter.post('/reviews/:restaurantId', isRestaurant, createRestaurantReview);
+
+restaurantsRouter.use('/reviews/:id', isReview)
+    .route('/reviews/:id')
+    .patch(updateReview)
+    .delete(deleteReview);
+
 module.exports = { restaurantsRouter };
